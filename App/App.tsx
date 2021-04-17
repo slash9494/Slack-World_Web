@@ -4,6 +4,7 @@ import { Redirect, Route, Switch } from "react-router-dom";
 
 const Home = loadable(() => import("@pages/Home"));
 const Channel = loadable(() => import("@pages/Channel"));
+const workspace = loadable(() => import("@components/Workspace"));
 
 const App = () => (
   <Switch>
@@ -11,7 +12,7 @@ const App = () => (
       <Redirect to="/Home" />
     </Route>
     <Route path="/Home" component={Home} />
-    <Route path="/channel" component={Channel} />
+    <Route path="/workspace/:workspace" component={workspace} />
   </Switch>
 );
 

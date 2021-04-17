@@ -10,7 +10,7 @@ function Channel() {
     fetcher
   );
   const handleLogout = () => {
-    axios.post("api/users/logout", null).then(() => {
+    axios.post("/api/users/logout", null).then(() => {
       mutate(false);
     });
   };

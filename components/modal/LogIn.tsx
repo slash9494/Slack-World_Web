@@ -1,13 +1,17 @@
 import React, { useState } from "react";
-import styled from "@emotion/styled";
 import axios from "axios";
-import { FormContainer, FormButton, Form, ErrorText } from "./utils/FormLayout";
+import {
+  FormContainer,
+  FormButton,
+  Form,
+  ErrorText,
+} from "@components/utils/FormLayout";
 import { Button, TextField } from "@material-ui/core";
 import useSWR from "swr";
 import { fetcher } from "@utils/fetcher";
 import { Redirect } from "react-router-dom";
 
-function Login() {
+function LogIn() {
   const { data: userData, error, revalidate } = useSWR("/api/users", fetcher);
   const [loginError, setLoginError] = useState("");
   const [inputs, setInputs] = useState({
@@ -41,7 +45,7 @@ function Login() {
       });
   };
   if (!error && userData) {
-    return <Redirect to="/channel" />;
+    return <Redirect to="/workspace/slack/channel/일반" />;
   }
 
   return (
@@ -71,4 +75,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default LogIn;

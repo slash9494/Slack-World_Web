@@ -3,12 +3,9 @@ import styled from "@emotion/styled";
 import { AppContainer, StarBg, Section } from "@components/utils/MainLayout";
 import { TweenMax, Power3, Power4, gsap } from "gsap";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
-import { makeStyles, createStyles } from "@material-ui/core/styles";
-import Modal from "@material-ui/core/Modal";
-import Backdrop from "@material-ui/core/Backdrop";
-import Fade from "@material-ui/core/Fade";
-import Login from "@components/Login";
-import SighUp from "@components/SighUp";
+import LogIn from "@components/modal/LogIn";
+import SighUp from "@components/modal/SighUp";
+import ModalContainer from "@components/utils/Modal";
 gsap.registerPlugin(ScrollToPlugin);
 const SectionTop = styled.div`
   min-height: 300vh;
@@ -72,16 +69,6 @@ function Home() {
     signUpOpen: false,
   });
   const { loginOpen, signUpOpen } = open;
-  const useStyles = makeStyles(() =>
-    createStyles({
-      modal: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      },
-    })
-  );
-  const classes = useStyles();
   const handleOpen = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     const value = e.currentTarget.id;
     setSignUpSuccess(false);
@@ -130,7 +117,6 @@ function Home() {
   }, [signUpSuccess]);
   function scrollHandler() {
     let scrollValue = window.pageYOffset;
-
     starBg.current.style.transform = "translateY(" + -scrollValue / 3 + "px)";
     title.current.style.transform = "translateY(" + scrollValue / 1.7 + "px)";
   }
@@ -161,34 +147,12 @@ function Home() {
                   <Text>회원가입</Text>
                 </li>
               </ul>
-              <Modal
-                className={classes.modal}
-                open={loginOpen}
-                onClose={handleClose}
-                closeAfterTransition
-                BackdropComponent={Backdrop}
-                BackdropProps={{
-                  timeout: 500,
-                }}
-              >
-                <Fade in={loginOpen}>
-                  <Login />
-                </Fade>
-              </Modal>
-              <Modal
-                className={classes.modal}
-                open={signUpOpen}
-                onClose={handleClose}
-                closeAfterTransition
-                BackdropComponent={Backdrop}
-                BackdropProps={{
-                  timeout: 500,
-                }}
-              >
-                <Fade in={loginOpen}>
-                  <SighUp setSignUpSuccess={setSignUpSuccess} />
-                </Fade>
-              </Modal>
+              <ModalContainer open={loginOpen} handleClose={handleClose}>
+                <LogIn />
+              </ModalContainer>
+              <ModalContainer open={signUpOpen} handleClose={handleClose}>
+                <SighUp setSignUpSuccess={setSignUpSuccess} />
+              </ModalContainer>
             </ContentsContainer>
           </SectionBottom>
         </Section>
