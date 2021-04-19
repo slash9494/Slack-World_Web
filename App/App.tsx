@@ -4,7 +4,7 @@ import { Redirect, Route, Switch } from "react-router-dom";
 
 const Home = loadable(() => import("@pages/Home"));
 const Channel = loadable(() => import("@pages/Channel"));
-const workspace = loadable(() => import("@components/Workspace"));
+const workspace = loadable(() => import("@components/Workspace/Workspace"));
 
 const App = () => (
   <Switch>
