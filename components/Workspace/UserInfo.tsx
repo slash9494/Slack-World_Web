@@ -3,9 +3,10 @@ import styled from "@emotion/styled";
 import gravatar from "gravatar";
 import { IUser } from "types/db";
 import { Button } from "@material-ui/core";
+import axios from "axios";
 interface Props {
   userData: IUser;
-  handleLogout: () => void;
+  mutate: (data?: false | IUser) => Promise<any>;
 }
 const Container = styled.div`
   display: flex;
@@ -14,6 +15,11 @@ const Container = styled.div`
 `;
 
 function UserInfo(props: Props) {
+  const handleLogout = () => {
+    axios.post("/api/users/logout", null).then(() => {
+      props.mutate(false);
+    });
+  };
   return (
     <Container>
       <img
@@ -24,8 +30,7 @@ function UserInfo(props: Props) {
       <Button
         variant="outlined"
         color="primary"
-        // style={{ marginLeft: "17px" }}
-        onClick={props.handleLogout}
+        onClick={handleLogout}
         id="workspaceModalOpen"
       >
         로그아웃

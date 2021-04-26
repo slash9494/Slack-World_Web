@@ -67,6 +67,7 @@ const useStyle = makeStyles((theme: Theme) =>
 );
 const WorkspaceName: VFC<Props> = (props) => {
   const classes = useStyle();
+
   const [modalOpen, setModalOpen] = useState({
     inviteWorkspaceOpen: false,
     createChannelOpen: false,

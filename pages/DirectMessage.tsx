@@ -6,12 +6,18 @@ import { fetcher } from "@utils/fetcher";
 import ChatLayout from "@components/utils/ChatLayout";
 
 function DirectMessage() {
-  const { workspace } = useParams<{ workspace?: string }>();
-  const { data: userData } = useSWR<IUser>("/api/users", fetcher, {
-    dedupingInterval: 2000, // 2초
-  });
+  const { workspace, id } = useParams<{ workspace?: string; id?: string }>();
+  const { data: userData } = useSWR(
+    `/api/workspaces/${workspace}/users/${id}`,
+    fetcher
+  );
 
-  return <ChatLayout></ChatLayout>;
+  return (
+    <ChatLayout
+      nickname={userData?.nickname}
+      email={userData?.email}
+    ></ChatLayout>
+  );
 }
 
 export default DirectMessage;

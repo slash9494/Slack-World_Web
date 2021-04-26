@@ -48,12 +48,18 @@ const ChannelContainer = styled.div`
   }
 `;
 const ChatContainer = styled.div`
-  display: flex;
-  flex-direction: column;
   width: 100%;
-  height: 100%;
+  height: 100vh;
 `;
-const ChatContents = styled.div``;
+const ChatContents = styled.div`
+  display: flex;
+  height: calc(100vh - 64px);
+  flex-flow: column wrap;
+  position: relative;
+  @media screen and (max-width: 500px) {
+    height: calc(100vh - 134px);
+  }
+`;
 const WorkspaceListIcon = styled.div`
   min-width: 56px;
 `;
@@ -87,6 +93,8 @@ function WorkspaceLayout() {
     channelModalOpen: false,
     wsNameDropOpen: false,
     userMenuOpen: false,
+    DMListOpen: false,
+    CHListOpen: false,
   });
   const {
     drawerOpen,
@@ -94,6 +102,8 @@ function WorkspaceLayout() {
     channelModalOpen,
     wsNameDropOpen,
     userMenuOpen,
+    DMListOpen,
+    CHListOpen,
   } = open;
   const handleOpen = useCallback(
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -113,13 +123,10 @@ function WorkspaceLayout() {
       wsNameDropOpen: false,
       channelModalOpen: false,
       userMenuOpen: false,
+      DMListOpen: false,
+      CHListOpen: false,
     });
   }, [open]);
-  const handleLogout = () => {
-    axios.post("/api/users/logout", null).then(() => {
-      mutate(false);
-    });
-  };
   useEffect(() => {
     function resizeWidth() {
       if (window.innerWidth < 500) {
@@ -157,7 +164,7 @@ function WorkspaceLayout() {
               id="userMenuOpen"
             >
               <Paper>
-                <UserInfo userData={userData} handleLogout={handleLogout} />
+                <UserInfo userData={userData} mutate={mutate} />
               </Paper>
             </MenuDrop>
           </div>
@@ -264,7 +271,11 @@ function WorkspaceLayout() {
           revalidateUser={revalidateUser}
         />
       </ModalContainer>
-      <MobileBar />
+      <MobileBar
+        DMListOpen={DMListOpen}
+        CHListOpen={CHListOpen}
+        handleOpen={handleOpen}
+      />
     </AppContainer>
   );
 }

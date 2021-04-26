@@ -11,6 +11,10 @@ export const ListItem = styled.div`
   &:hover {
     background: #ced4da;
   }
+  & a {
+    text-decoration: none;
+    color: black;
+  }
   @media screen and (max-width: 1025px) {
     font-size: 2vw;
   }

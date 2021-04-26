@@ -32,41 +32,30 @@ function DmList() {
   );
   return (
     <ChannelListLayout listName="Direct Messages">
-      <ListItem>
-        <NavLink
-          key=""
-          to={`/workspace/${workspace}/dm/1`}
-          activeStyle={{ fontWeight: "bold" }}
-          style={{ textDecoration: "none", color: "black" }}
-        >
-          <FiberManualRecordIcon
-            style={{ color: "#51cf66" }}
-            className={classes.CircleIcon}
-          />
-          mike(나)
-        </NavLink>
-      </ListItem>
-      <ListItem>
+      {memberData?.map((member) => {
+        return (
+          <ListItem>
+            <NavLink
+              key={`${member.id}`}
+              to={`/workspace/${workspace}/dm/${member.id}`}
+              activeStyle={{ fontWeight: "bold" }}
+            >
+              <FiberManualRecordIcon
+                style={{ color: "#51cf66" }}
+                className={classes.CircleIcon}
+              />
+              {member.nickname}
+            </NavLink>
+          </ListItem>
+        );
+      })}
+      {/* <ListItem>
         <RadioButtonUncheckedIcon
           style={{ color: "#adb5bd" }}
           className={classes.CircleIcon}
         />
         mike
-      </ListItem>
-      <ListItem>
-        <FiberManualRecordIcon
-          style={{ color: "#51cf66" }}
-          className={classes.CircleIcon}
-        />
-        mik
-      </ListItem>
-      <ListItem>
-        <RadioButtonUncheckedIcon
-          style={{ color: "#adb5bd" }}
-          className={classes.CircleIcon}
-        />
-        mike
-      </ListItem>
+      </ListItem> */}
     </ChannelListLayout>
   );
 }

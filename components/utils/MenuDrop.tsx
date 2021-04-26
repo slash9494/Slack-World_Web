@@ -1,6 +1,5 @@
 import React, { useEffect, ReactElement, FC, useRef, useCallback } from "react";
 import { Popper, Grow, ClickAwayListener, Button } from "@material-ui/core";
-import Paper from "@material-ui/core/Paper";
 interface Props {
   children: ReactElement<any, any> | undefined;
   menuIcon: any;
