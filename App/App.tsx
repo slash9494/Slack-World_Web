@@ -3,15 +3,16 @@ import React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 
 const Home = loadable(() => import("@pages/Home"));
-const Channel = loadable(() => import("@pages/Channel"));
-const workspace = loadable(() => import("@components/Workspace/Workspace"));
+const workspace = loadable(
+  () => import("@components/Workspace/WorkspaceLayout")
+);
 
 const App = () => (
   <Switch>
     <Route exact path="/">
-      <Redirect to="/Home" />
+      <Redirect to="/home" />
     </Route>
-    <Route path="/Home" component={Home} />
+    <Route path="/home" component={Home} />
     <Route path="/workspace/:workspace" component={workspace} />
   </Switch>
 );

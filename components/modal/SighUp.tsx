@@ -65,10 +65,10 @@ function SighUp(props: Props) {
     [inputs]
   );
   if (userData) {
-    Swal.fire("이미 로그인이 되어있습니다", "", "info");
     props.setSignUpSuccess(true);
+    Swal.fire("이미 로그인이 되어있습니다", "", "info");
   }
-  console.log(userData);
+
   return (
     <FormContainer>
       <Form onSubmit={onSubmit}>

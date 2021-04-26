@@ -33,6 +33,7 @@ const MenuDrop: FC<Props> = ({ children, menuIcon, open, handleOpen, id }) => {
         anchorEl={anchorRef.current}
         transition
         onClick={stopPropagation}
+        style={{ zIndex: 10000 }}
       >
         {({ TransitionProps, placement }) => (
           <Grow

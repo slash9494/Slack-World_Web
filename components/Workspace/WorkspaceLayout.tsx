@@ -27,18 +27,36 @@ import WorkspaceDrawer from "./Drawer";
 import WorkspaceAppBar from "./AppBar";
 import axios from "axios";
 import UserInfo from "./UserInfo";
-import Channels from "./Channels";
 import { Paper } from "@material-ui/core";
+import WorkspaceName from "./WorkspaceName";
+import ChannelList from "./ChannelList";
+import DmList from "./DmList";
+import MobileBar from "./MobileBar";
 const AppContainer = styled.div`
   display: flex;
   width: 100vw;
   height: 100vh;
 `;
+const ChannelContainer = styled.div`
+  width: 17vw;
+  height: calc(100vh - 64px);
+  top: 64;
+  position: relative;
+  border-right: 1px solid #e3e3e3;
+  @media screen and (max-width: 500px) {
+    display: none;
+  }
+`;
 const ChatContainer = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100%;
 `;
 const ChatContents = styled.div``;
+const WorkspaceListIcon = styled.div`
+  min-width: 56px;
+`;
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     toolbar: {
@@ -54,7 +72,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-function Workspace() {
+function WorkspaceLayout() {
   const params = useParams<{ workspace?: string }>();
   const { workspace } = params;
   const { data: userData, error, revalidate: revalidateUser, mutate } = useSWR<
@@ -62,27 +80,28 @@ function Workspace() {
   >("/api/users", fetcher);
   const classes = useStyles();
   const theme = useTheme();
+  const [drawerWsName, setDrawerWsName] = useState(false);
   const [open, setOpen] = useState({
     drawerOpen: false,
     workspaceModalOpen: false,
     channelModalOpen: false,
-    channelDropOpen: false,
+    wsNameDropOpen: false,
     userMenuOpen: false,
   });
   const {
     drawerOpen,
     workspaceModalOpen,
     channelModalOpen,
-    channelDropOpen,
+    wsNameDropOpen,
     userMenuOpen,
   } = open;
   const handleOpen = useCallback(
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       e.stopPropagation();
-      const value = e.currentTarget.id;
+      const name = e.currentTarget.id;
       setOpen({
         ...open,
-        [value]: true,
+        [name]: true,
       });
     },
     [open]
@@ -91,7 +110,7 @@ function Workspace() {
     setOpen({
       drawerOpen: false,
       workspaceModalOpen: false,
-      channelDropOpen: false,
+      wsNameDropOpen: false,
       channelModalOpen: false,
       userMenuOpen: false,
     });
@@ -101,10 +120,26 @@ function Workspace() {
       mutate(false);
     });
   };
+  useEffect(() => {
+    function resizeWidth() {
+      if (window.innerWidth < 500) {
+        setDrawerWsName(true);
+      } else {
+        setDrawerWsName(false);
+      }
+    }
+    if (window.innerWidth < 500) {
+      setDrawerWsName(true);
+    } else {
+      setDrawerWsName(false);
+    }
+    window.addEventListener("resize", resizeWidth);
+    return () => window.removeEventListener("resize", resizeWidth);
+  }, []);
   if (userData === false) {
     return <Redirect to="/home" />;
   }
-  console.log(open);
+
   return (
     <AppContainer onClick={handleClose}>
       <WorkspaceAppBar drawerOpen={drawerOpen} handleOpen={handleOpen}>
@@ -133,21 +168,33 @@ function Workspace() {
       <WorkspaceDrawer drawerOpen={drawerOpen}>
         <div className={classes.toolbar}>
           <IconButton onClick={handleClose} id="drawerOpen">
-            {theme.direction === "rtl" ? null : <ChevronLeftIcon />}
+            {theme.direction === "rtl" ? null : (
+              <>
+                {drawerWsName ? (
+                  <WorkspaceName
+                    userData={userData}
+                    url={workspace}
+                    dropOpen={wsNameDropOpen}
+                    handleOpen={handleOpen}
+                  />
+                ) : null}
+                <ChevronLeftIcon />
+              </>
+            )}
           </IconButton>
         </div>
         <List>
           {userData?.Workspaces.map((ws: IWorkspace) => {
             return (
-              <ListItem button key={ws.id}>
+              <ListItem button key={ws.id} style={{ padding: "10px 10px" }}>
                 <Link
                   key={ws.id}
                   to={`/workspace/${ws.url}/channel/일반`}
                   style={{ textDecoration: "none", display: "flex" }}
                 >
-                  <div style={{ minWidth: "56px" }}>
+                  <WorkspaceListIcon>
                     <Avatar className={classes.avatar}>{ws.name[0]}</Avatar>
-                  </div>
+                  </WorkspaceListIcon>
                   <ListItemText style={{ color: "#4c6ef5" }}>
                     {ws.name}
                   </ListItemText>
@@ -155,12 +202,16 @@ function Workspace() {
               </ListItem>
             );
           })}
-          <ListItem>
+          <ListItem style={{ padding: "10px 10px" }}>
             <Avatar className={classes.avatar}>
               <Button
                 onClick={handleOpen}
                 id="workspaceModalOpen"
-                style={{ color: "white", fontSize: "20px" }}
+                style={{
+                  color: "white",
+                  fontSize: "20px",
+                  paddingBottom: "10px",
+                }}
               >
                 +
               </Button>
@@ -180,13 +231,18 @@ function Workspace() {
           </ListItem>
         </List>
       </WorkspaceDrawer>
-      <Channels
-        userData={userData}
-        url={workspace}
-        handleClose={handleClose}
-        dropOpen={channelDropOpen}
-        handleOpen={handleOpen}
-      />
+      <ChannelContainer>
+        {drawerWsName ? null : (
+          <WorkspaceName
+            userData={userData}
+            url={workspace}
+            dropOpen={wsNameDropOpen}
+            handleOpen={handleOpen}
+          />
+        )}
+        <ChannelList />
+        <DmList />
+      </ChannelContainer>
       <ChatContainer>
         <div className={classes.toolbar} />
         <ChatContents>
@@ -208,8 +264,9 @@ function Workspace() {
           revalidateUser={revalidateUser}
         />
       </ModalContainer>
+      <MobileBar />
     </AppContainer>
   );
 }
 
-export default Workspace;
+export default WorkspaceLayout;

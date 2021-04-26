@@ -31,6 +31,7 @@ const ModalContainer: FC<Props> = ({ children, open, handleClose }) => {
       BackdropProps={{
         timeout: 500,
       }}
+      style={{ zIndex: 20000 }}
     >
       <Fade in={open}>{children}</Fade>
     </Modal>

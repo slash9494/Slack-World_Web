@@ -1,11 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import styled from "@emotion/styled";
-import { AppContainer, StarBg, Section } from "@components/utils/MainLayout";
 import { TweenMax, Power3, Power4, gsap } from "gsap";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import LogIn from "@components/modal/LogIn";
 import SighUp from "@components/modal/SighUp";
 import ModalContainer from "@components/utils/Modal";
+import useSWR from "swr";
+import { fetcher } from "@utils/fetcher";
+import { Link } from "react-router-dom";
+import HomeLayout from "@components/Home/HomeLayout";
 gsap.registerPlugin(ScrollToPlugin);
 const SectionTop = styled.div`
   min-height: 300vh;
@@ -61,6 +64,7 @@ const Text = styled.p`
   }
 `;
 function Home() {
+  const { data: userData, error, revalidate } = useSWR("/api/users", fetcher);
   const starBg = useRef() as React.MutableRefObject<HTMLDivElement>;
   const title = useRef() as React.MutableRefObject<HTMLDivElement>;
   const [signUpSuccess, setSignUpSuccess] = useState(false);
@@ -69,18 +73,21 @@ function Home() {
     signUpOpen: false,
   });
   const { loginOpen, signUpOpen } = open;
-  const handleOpen = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
-    const value = e.currentTarget.id;
-    setSignUpSuccess(false);
-    setOpen({
-      ...open,
-      [value]: true,
-    });
-  };
+  const handleOpen = useCallback(
+    (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+      const name = e.currentTarget.id;
+      setSignUpSuccess(false);
+      setOpen({
+        ...open,
+        [name]: true,
+      });
+    },
+    [open]
+  );
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setOpen({ loginOpen: false, signUpOpen: false });
-  };
+  }, [open]);
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     for (let i = 0; i < title.current.querySelectorAll("div").length; i++) {
@@ -123,40 +130,45 @@ function Home() {
 
   return (
     <>
-      <AppContainer>
-        <StarBg ref={starBg} />
-        <Section>
-          <SectionTop>
-            <TitleContainer ref={title}>
-              <div>W</div>
-              <div>E</div>
-              <div>L</div>
-              <div>C</div>
-              <div>O</div>
-              <div>M</div>
-              <div>E</div>
-            </TitleContainer>
-          </SectionTop>
-          <SectionBottom className="sectionBottom">
-            <ContentsContainer>
-              <ul>
+      <HomeLayout ref={starBg}>
+        <SectionTop>
+          <TitleContainer ref={title}>
+            <div>W</div>
+            <div>E</div>
+            <div>L</div>
+            <div>C</div>
+            <div>O</div>
+            <div>M</div>
+            <div>E</div>
+          </TitleContainer>
+        </SectionTop>
+        <SectionBottom className="sectionBottom">
+          <ContentsContainer>
+            <ul>
+              {userData ? (
+                <li>
+                  <Link to="/workspace/slack/channel/일반">
+                    <Text>입장</Text>
+                  </Link>
+                </li>
+              ) : (
                 <li onClick={handleOpen} id="loginOpen">
                   <Text>로그인</Text>
                 </li>
-                <li onClick={handleOpen} id="signUpOpen">
-                  <Text>회원가입</Text>
-                </li>
-              </ul>
-              <ModalContainer open={loginOpen} handleClose={handleClose}>
-                <LogIn />
-              </ModalContainer>
-              <ModalContainer open={signUpOpen} handleClose={handleClose}>
-                <SighUp setSignUpSuccess={setSignUpSuccess} />
-              </ModalContainer>
-            </ContentsContainer>
-          </SectionBottom>
-        </Section>
-      </AppContainer>
+              )}
+              <li onClick={handleOpen} id="signUpOpen">
+                <Text>회원가입</Text>
+              </li>
+            </ul>
+            <ModalContainer open={loginOpen} handleClose={handleClose}>
+              <LogIn />
+            </ModalContainer>
+            <ModalContainer open={signUpOpen} handleClose={handleClose}>
+              <SighUp setSignUpSuccess={setSignUpSuccess} />
+            </ModalContainer>
+          </ContentsContainer>
+        </SectionBottom>
+      </HomeLayout>
     </>
   );
 }
