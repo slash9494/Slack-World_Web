@@ -21,71 +21,29 @@ import ModalContainer from "../utils/Modal";
 import WorkspaceModal from "../modal/WorkspaceModal";
 import { fetcher } from "@utils/fetcher";
 import useSWR from "swr";
-import { IUser, IWorkspace } from "types/db";
+import { IUser, IWorkspace, IChannel } from "types/db";
 import MenuDrop from "../utils/MenuDrop";
 import WorkspaceDrawer from "./Drawer";
 import WorkspaceAppBar from "./AppBar";
-import axios from "axios";
 import UserInfo from "./UserInfo";
 import { Paper } from "@material-ui/core";
 import WorkspaceName from "./WorkspaceName";
 import ChannelList from "./ChannelList";
 import DmList from "./DmList";
 import MobileBar from "./MobileBar";
-const AppContainer = styled.div`
-  display: flex;
-  width: 100vw;
-  height: 100vh;
-`;
-const ChannelContainer = styled.div`
-  width: 17vw;
-  height: calc(100vh - 64px);
-  top: 64;
-  position: relative;
-  border-right: 1px solid #e3e3e3;
-  @media screen and (max-width: 500px) {
-    display: none;
-  }
-`;
-const ChatContainer = styled.div`
-  width: 100%;
-  height: 100vh;
-`;
-const ChatContents = styled.div`
-  display: flex;
-  height: calc(100vh - 64px);
-  flex-flow: column wrap;
-  position: relative;
-  @media screen and (max-width: 500px) {
-    height: calc(100vh - 134px);
-  }
-`;
-const WorkspaceListIcon = styled.div`
-  min-width: 56px;
-`;
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    toolbar: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "flex-end",
-      padding: theme.spacing(0, 1),
-      ...theme.mixins.toolbar,
-    },
-    avatar: {
-      color: theme.palette.getContrastText("#5c7cfa"),
-      backgroundColor: "#4c6ef5",
-    },
-  })
-);
+import useSocket from "@components/hooks/useSocket";
 function WorkspaceLayout() {
-  const params = useParams<{ workspace?: string }>();
-  const { workspace } = params;
+  const { workspace } = useParams<{ workspace?: string }>();
   const { data: userData, error, revalidate: revalidateUser, mutate } = useSWR<
     IUser | false
   >("/api/users", fetcher);
+  const { data: channelData } = useSWR<IChannel[]>(
+    userData ? `/api/workspaces/${workspace}/channels` : null,
+    fetcher
+  );
   const classes = useStyles();
   const theme = useTheme();
+  const [socket, disconnect] = useSocket(workspace);
   const [drawerWsName, setDrawerWsName] = useState(false);
   const [open, setOpen] = useState({
     drawerOpen: false,
@@ -146,7 +104,19 @@ function WorkspaceLayout() {
   if (userData === false) {
     return <Redirect to="/home" />;
   }
-
+  useEffect(() => {
+    if (userData && channelData) {
+      socket?.emit("login", {
+        id: userData?.id,
+        channels: channelData?.map((v) => v.id),
+      });
+    }
+  }, [socket, userData, channelData]);
+  useEffect(() => {
+    return () => {
+      disconnect();
+    };
+  }, [workspace, disconnect]);
   return (
     <AppContainer onClick={handleClose}>
       <WorkspaceAppBar drawerOpen={drawerOpen} handleOpen={handleOpen}>
@@ -174,9 +144,14 @@ function WorkspaceLayout() {
       </WorkspaceAppBar>
       <WorkspaceDrawer drawerOpen={drawerOpen}>
         <div className={classes.toolbar}>
-          <IconButton onClick={handleClose} id="drawerOpen">
+          <IconButton
+            onClick={handleClose}
+            id="drawerOpen"
+            className={classes.drawerHeader}
+          >
             {theme.direction === "rtl" ? null : (
               <>
+                {" "}
                 {drawerWsName ? (
                   <WorkspaceName
                     userData={userData}
@@ -281,3 +256,57 @@ function WorkspaceLayout() {
 }
 
 export default WorkspaceLayout;
+
+const AppContainer = styled.div`
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+`;
+const ChannelContainer = styled.div`
+  min-width: 17vw;
+  max-width: 17vw;
+  height: calc(100vh - 64px);
+  top: 64;
+  position: relative;
+  border-right: 1px solid #e3e3e3;
+  @media screen and (max-width: 500px) {
+    display: none;
+  }
+`;
+const ChatContainer = styled.div`
+  width: 100%;
+  height: 100vh;
+`;
+const ChatContents = styled.div`
+  display: flex;
+  height: calc(100vh - 64px);
+  flex-flow: column wrap;
+  position: relative;
+  @media screen and (max-width: 500px) {
+    height: calc(100vh - 134px);
+  }
+`;
+const WorkspaceListIcon = styled.div`
+  min-width: 56px;
+`;
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    toolbar: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "flex-end",
+      ...theme.mixins.toolbar,
+    },
+    avatar: {
+      color: theme.palette.getContrastText("#5c7cfa"),
+      backgroundColor: "#4c6ef5",
+    },
+    drawerHeader: {
+      [theme.breakpoints.down("xs")]: {
+        width: "100%",
+        justifyContent: "space-between",
+      },
+    },
+  })
+);

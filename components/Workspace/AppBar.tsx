@@ -36,6 +36,9 @@ const useStyles = makeStyles((theme: Theme) =>
     menuButton: {
       marginRight: 36,
       padding: 5,
+      [theme.breakpoints.down("xs")]: {
+        padding: 12,
+      },
     },
     hide: {
       display: "none",

@@ -8,7 +8,7 @@ import ModalContainer from "@components/utils/Modal";
 import useSWR from "swr";
 import { fetcher } from "@utils/fetcher";
 import { Link } from "react-router-dom";
-import HomeLayout from "@components/Home/HomeLayout";
+import HomeLayout from "@components/home/HomeLayout";
 gsap.registerPlugin(ScrollToPlugin);
 const SectionTop = styled.div`
   min-height: 300vh;

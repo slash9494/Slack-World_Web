@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
 import { useParams, NavLink } from "react-router-dom";
@@ -8,6 +8,7 @@ import { fetcher } from "@utils/fetcher";
 import { makeStyles, createStyles, Theme } from "@material-ui/core";
 import ChannelListLayout from "./ChanneListLayout";
 import { ListItem } from "./ChannelList";
+import useSocket from "@components/hooks/useSocket";
 
 const useStyle = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,6 +31,19 @@ function DmList() {
     userData ? `/api/workspaces/${workspace}/members` : null,
     fetcher
   );
+  const [onlineList, setOnlineList] = useState<number[]>([]);
+  const [socket] = useSocket(workspace);
+  useEffect(() => {
+    setOnlineList([]);
+  }, [workspace]);
+  useEffect(() => {
+    socket?.on("onlineList", (data: number[]) => {
+      setOnlineList(data);
+    });
+    return () => {
+      socket?.off("onlineList");
+    };
+  }, [socket]);
   return (
     <ChannelListLayout listName="Direct Messages">
       {memberData?.map((member) => {
@@ -40,22 +54,22 @@ function DmList() {
               to={`/workspace/${workspace}/dm/${member.id}`}
               activeStyle={{ fontWeight: "bold" }}
             >
-              <FiberManualRecordIcon
-                style={{ color: "#51cf66" }}
-                className={classes.CircleIcon}
-              />
+              {onlineList.includes(member.id) ? (
+                <FiberManualRecordIcon
+                  style={{ color: "#51cf66" }}
+                  className={classes.CircleIcon}
+                />
+              ) : (
+                <RadioButtonUncheckedIcon
+                  style={{ color: "#adb5bd" }}
+                  className={classes.CircleIcon}
+                />
+              )}
               {member.nickname}
             </NavLink>
           </ListItem>
         );
       })}
-      {/* <ListItem>
-        <RadioButtonUncheckedIcon
-          style={{ color: "#adb5bd" }}
-          className={classes.CircleIcon}
-        />
-        mike
-      </ListItem> */}
     </ChannelListLayout>
   );
 }

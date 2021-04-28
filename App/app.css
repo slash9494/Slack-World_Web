@@ -9,3 +9,12 @@ body {
     -moz-osx-font-smoothing: grayscale;
     ;
 }
+
+.swal2-container.swal2-center {
+    position: fixed;
+    z-index: 100000;
+}
+
+.css-fl1c6m-InputArea__input {
+    border: transparent;
+}

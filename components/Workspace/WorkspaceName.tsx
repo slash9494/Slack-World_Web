@@ -25,6 +25,7 @@ const WorkspaceNameContainer = styled.div`
   }
   @media screen and (max-width: 500px) {
     border-radius: 4px;
+    width: fit-content;
   }
 `;
 const NameStyle = styled.span`

@@ -1,4 +1,4 @@
-import React, { FC, useState, useCallback } from "react";
+import React, { FC, useState, useCallback, useEffect } from "react";
 import styled from "@emotion/styled";
 import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
 import { Link, useParams, NavLink } from "react-router-dom";
@@ -9,6 +9,7 @@ import { Paper } from "@material-ui/core";
 import useSWR from "swr";
 import { IUser, IUserWithOnline } from "types/db";
 import { fetcher } from "@utils/fetcher";
+import useSocket from "@components/hooks/useSocket";
 interface Props {
   DMListOpen: boolean;
   CHListOpen: boolean;
@@ -51,6 +52,10 @@ const ItemListContainer = styled.div`
     overflow: hidden;
   }
 `;
+const ItemContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
 
 const MobileBar: FC<Props> = (props) => {
   const { workspace } = useParams<{ workspace?: string }>();
@@ -61,6 +66,19 @@ const MobileBar: FC<Props> = (props) => {
     userData ? `/api/workspaces/${workspace}/members` : null,
     fetcher
   );
+  const [onlineList, setOnlineList] = useState<number[]>([]);
+  const [socket] = useSocket(workspace);
+  useEffect(() => {
+    setOnlineList([]);
+  }, [workspace]);
+  useEffect(() => {
+    socket?.on("onlineList", (data: number[]) => {
+      setOnlineList(data);
+    });
+    return () => {
+      socket?.off("onlineList");
+    };
+  }, [socket]);
   return (
     <BarContainer>
       <ListContainer>
@@ -86,11 +104,18 @@ const MobileBar: FC<Props> = (props) => {
                     to={`/workspace/${workspace}/dm/${member.id}`}
                     activeStyle={{ fontWeight: "bold" }}
                   >
-                    <FiberManualRecordIcon
-                      style={{ color: "#51cf66" }}
-                      // className={classes.CircleIcon}
-                    />{" "}
-                    {member.nickname}
+                    <ItemContainer>
+                      {onlineList.includes(member.id) ? (
+                        <FiberManualRecordIcon
+                          style={{ color: "#51cf66", fontSize: "15px" }}
+                        />
+                      ) : (
+                        <RadioButtonUncheckedIcon
+                          style={{ color: "#adb5bd", fontSize: "13px" }}
+                        />
+                      )}
+                      {member.nickname}
+                    </ItemContainer>
                   </NavLink>
                 );
               })}
