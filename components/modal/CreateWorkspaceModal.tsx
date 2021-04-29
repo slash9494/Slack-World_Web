@@ -7,7 +7,7 @@ interface Props {
   closeModal: () => void;
   revalidateUser: () => Promise<boolean>;
 }
-function WorkspaceModal(props: Props) {
+function CreateWorkspaceModal(props: Props) {
   const [inputs, setInputs] = useState({
     name: "",
     address: "",
@@ -75,4 +75,4 @@ function WorkspaceModal(props: Props) {
   );
 }
 
-export default WorkspaceModal;
+export default CreateWorkspaceModal;

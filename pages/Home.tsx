@@ -6,7 +6,7 @@ import LogIn from "@components/modal/LogIn";
 import SighUp from "@components/modal/SighUp";
 import ModalContainer from "@components/utils/Modal";
 import useSWR from "swr";
-import { fetcher } from "@utils/fetcher";
+import { fetcher } from "@components/utils/fetcher";
 import { Link } from "react-router-dom";
 import HomeLayout from "@components/home/HomeLayout";
 gsap.registerPlugin(ScrollToPlugin);
@@ -23,6 +23,9 @@ const TitleContainer = styled.div`
   padding-top: 35vh;
   font-size: 40px;
   font-weight: 100;
+  font-weight: bold;
+  letter-spacing: 2;
+  font-size: 60;
   & div {
     display: inline-flex;
     /* letter-spacing: 0px; */
@@ -52,6 +55,9 @@ const ContentsContainer = styled.div`
       border: 2px solid #4c6ef5;
       justify-content: center;
       align-items: center;
+      @media screen and (max-width: 800px) {
+        width: 35vw;
+      }
     }
   }
 `;
@@ -59,7 +65,7 @@ const ContentsContainer = styled.div`
 const Text = styled.p`
   font-size: 2vw;
   color: #fff;
-  @media screen and (width: 500px) {
+  @media screen and (max-width: 800px) {
     font-size: 5vw;
   }
 `;
@@ -133,13 +139,11 @@ function Home() {
       <HomeLayout ref={starBg}>
         <SectionTop>
           <TitleContainer ref={title}>
-            <div>W</div>
-            <div>E</div>
+            <div>S</div>
             <div>L</div>
+            <div>A</div>
             <div>C</div>
-            <div>O</div>
-            <div>M</div>
-            <div>E</div>
+            <div>K</div>
           </TitleContainer>
         </SectionTop>
         <SectionBottom className="sectionBottom">
@@ -147,7 +151,10 @@ function Home() {
             <ul>
               {userData ? (
                 <li>
-                  <Link to="/workspace/slack/channel/일반">
+                  <Link
+                    to="/workspace/talkRoom/channel/일반"
+                    style={{ textDecoration: "none" }}
+                  >
                     <Text>입장</Text>
                   </Link>
                 </li>

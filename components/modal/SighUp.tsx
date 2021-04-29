@@ -5,7 +5,7 @@ import axios from "axios";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import useSWR from "swr";
-import { fetcher } from "@utils/fetcher";
+import { fetcher } from "@components/utils/fetcher";
 
 interface Props {
   setSignUpSuccess: React.Dispatch<React.SetStateAction<boolean>>;

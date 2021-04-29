@@ -121,7 +121,7 @@ const WorkspaceName: VFC<Props> = (props) => {
         <InviteWorkspaceModal onClose={onClose} />
       </ModalContainer>
       <ModalContainer open={createChannelOpen} handleClose={onClose}>
-        <CreateChannelModal />
+        <CreateChannelModal closeModal={onClose} />
       </ModalContainer>
     </WorkspaceNameContainer>
   );

@@ -8,7 +8,7 @@ import {
 } from "@components/utils/FormLayout";
 import { Button, TextField } from "@material-ui/core";
 import useSWR from "swr";
-import { fetcher } from "@utils/fetcher";
+import { fetcher } from "@components/utils/fetcher";
 import { Redirect } from "react-router-dom";
 
 function LogIn() {
@@ -45,7 +45,7 @@ function LogIn() {
       });
   };
   if (!error && userData) {
-    return <Redirect to="/workspace/slack/channel/일반" />;
+    return <Redirect to="/workspace/sleact/channel/일반" />;
   }
 
   return (

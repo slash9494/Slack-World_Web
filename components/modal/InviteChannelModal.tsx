@@ -10,12 +10,16 @@ import { fetcher } from "@components/utils/fetcher";
 interface Props {
   onClose: () => void;
 }
-
-const InviteWorkspaceModal: FC<Props> = (props) => {
-  const { workspace } = useParams<{ workspace: string }>();
+const InviteChannelModal: FC<Props> = (props) => {
+  const { workspace, channel } = useParams<{
+    workspace: string;
+    channel: string;
+  }>();
   const { data: userData } = useSWR<IUser>("/api/users", fetcher);
   const { revalidate: revalidateMember } = useSWR<IUser[]>(
-    userData ? `/api/workspaces/${workspace}/members` : null,
+    userData && channel
+      ? `/api/workspaces/${workspace}/channels/${channel}/members`
+      : null,
     fetcher
   );
   const [input, setInput] = useState("");
@@ -33,7 +37,7 @@ const InviteWorkspaceModal: FC<Props> = (props) => {
         return Swal.fire("이메일을 입력하세요", ``, "info");
       }
       axios
-        .post(`/api/workspaces/${workspace}/members`, {
+        .post(`/api/workspaces/${workspace}/channels/${channel}/members`, {
           email: input,
         })
         .then(() => {
@@ -73,4 +77,4 @@ const InviteWorkspaceModal: FC<Props> = (props) => {
   );
 };
 
-export default InviteWorkspaceModal;
+export default InviteChannelModal;

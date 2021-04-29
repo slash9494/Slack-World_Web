@@ -13,8 +13,8 @@ const Chat: FC<Props> = (props) => {
   const { workspace } = useParams<{ workspace: string; channel: string }>();
   const chatSections = useMemo(
     () =>
-      Object.entries(props.data).map(([date, chats]) => {
-        const chatData = chats.map((chat: IDM | IChat) => {
+      Object.entries(props.data).map(([date, chats], index) => {
+        const chatData = chats.map((chat: IDM | IChat, i) => {
           const contents = regexifyString({
             input: chat.content,
             pattern: /@\[(.+?)\]\((\d+?)\)|\n/g,
@@ -36,7 +36,7 @@ const Chat: FC<Props> = (props) => {
           const user: IUser = "Sender" in chat ? chat.Sender : chat.User;
           return (
             <>
-              <ChatInfo>
+              <ChatInfo key={i}>
                 <img
                   src={gravatar.url(user.email, { s: "28px", d: "retro" })}
                   alt={user.nickname}
@@ -54,11 +54,11 @@ const Chat: FC<Props> = (props) => {
         });
         return (
           <>
-            <StickyHeader>
+            <StickyHeader key="dateheader">
               <button>{date}</button>
             </StickyHeader>
-            <Divider />
-            <div>{chatData}</div>
+            <Divider key="divider" />
+            <div key={index}>{chatData}</div>
           </>
         );
       }),
@@ -114,7 +114,6 @@ const StickyHeader = styled.div`
     background: white;
     border: none;
     outline: none;
-    cursor: pointer;
   }
 `;
 

@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FC } from "react";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
 import { useParams, NavLink } from "react-router-dom";
 import useSWR from "swr";
 import { IUser, IUserWithOnline } from "types/db";
-import { fetcher } from "@utils/fetcher";
+import { fetcher } from "@components/utils/fetcher";
 import { makeStyles, createStyles, Theme } from "@material-ui/core";
 import ChannelListLayout from "./ChanneListLayout";
-import { ListItem } from "./ChannelList";
+import { ListItem, Count } from "./ChannelList";
 import useSocket from "@components/hooks/useSocket";
-
+interface Props {
+  dmParams: string;
+}
 const useStyle = makeStyles((theme: Theme) =>
   createStyles({
     CircleIcon: {
@@ -21,7 +23,7 @@ const useStyle = makeStyles((theme: Theme) =>
   })
 );
 
-function DmList() {
+const DmList: FC<Props> = (props) => {
   const classes = useStyle();
   const { workspace } = useParams<{ workspace?: string }>();
   const { data: userData } = useSWR<IUser>("/api/users", fetcher, {
@@ -33,6 +35,19 @@ function DmList() {
   );
   const [onlineList, setOnlineList] = useState<number[]>([]);
   const [socket] = useSocket(workspace);
+  const date = localStorage.getItem(`${workspace}-${props.dmParams}`) || 0;
+  const { data: count, mutate } = useSWR<number>(
+    userData
+      ? `/api/workspaces/${workspace}/dms/${props.dmParams}/unreads?after=${date}`
+      : null,
+    fetcher
+  );
+
+  // useEffect(() => {
+  //   if (location.pathname === `/workspace/${workspace}/dm/${props.dmParams}`) {
+  //     mutate(0);
+  //   }
+  // }, [mutate, location.pathname, workspace, props.dmParams]);
   useEffect(() => {
     setOnlineList([]);
   }, [workspace]);
@@ -46,9 +61,9 @@ function DmList() {
   }, [socket]);
   return (
     <ChannelListLayout listName="Direct Messages">
-      {memberData?.map((member) => {
+      {memberData?.map((member, index) => {
         return (
-          <ListItem>
+          <ListItem key={index}>
             <NavLink
               key={`${member.id}`}
               to={`/workspace/${workspace}/dm/${member.id}`}
@@ -65,13 +80,15 @@ function DmList() {
                   className={classes.CircleIcon}
                 />
               )}
-              {member.nickname}
+              <span>{member.nickname}</span>
+              {member.id === userData?.id && <span> (나)</span>}
+              {count !== undefined && count > 0 && <Count>{count}</Count>}
             </NavLink>
           </ListItem>
         );
       })}
     </ChannelListLayout>
   );
-}
+};
 
 export default DmList;
