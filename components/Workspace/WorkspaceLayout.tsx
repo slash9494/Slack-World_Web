@@ -86,21 +86,15 @@ function WorkspaceLayout() {
       CHListOpen: false,
     });
   }, [open]);
-  const updateChannelParams = useCallback((channelName) => {
-    setChannelParams(channelName);
-  }, []);
-  const updateDmParams = useCallback((channelName) => {
-    setDmParams(channelName);
-  }, []);
   useEffect(() => {
     function resizeWidth() {
-      if (window.innerWidth < 500) {
+      if (window.innerWidth <= 600) {
         setDrawerWsName(true);
       } else {
         setDrawerWsName(false);
       }
     }
-    if (window.innerWidth < 500) {
+    if (window.innerWidth <= 600) {
       setDrawerWsName(true);
     } else {
       setDrawerWsName(false);
@@ -278,8 +272,7 @@ const AppContainer = styled.div`
   height: 100vh;
 `;
 const ChannelContainer = styled.div`
-  min-width: 17vw;
-  max-width: 17vw;
+  width: 19vw;
   height: calc(100vh - 64px);
   top: 64;
   position: relative;

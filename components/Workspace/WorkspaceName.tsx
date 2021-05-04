@@ -23,7 +23,7 @@ const WorkspaceNameContainer = styled.div`
   @media screen and (max-width: 1025px) {
     height: 7%;
   }
-  @media screen and (max-width: 500px) {
+  @media screen and (max-width: 600px) {
     border-radius: 4px;
     width: fit-content;
   }
@@ -35,7 +35,7 @@ const NameStyle = styled.span`
   align-items: center;
   justify-content: flex-start;
   font-size: 2vw;
-  @media screen and (max-width: 500px) {
+  @media screen and (max-width: 600px) {
     font-size: 15px;
   }
 `;

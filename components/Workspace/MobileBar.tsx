@@ -137,7 +137,7 @@ const BarContainer = styled.div`
   bottom: 0;
   border-top: 1px solid #e3e3e3;
   display: flex;
-  @media screen and (min-width: 500px) {
+  @media screen and (min-width: 600px) {
     display: none;
   }
 `;

@@ -1,14 +1,22 @@
-import React, { useEffect, useState, FC } from "react";
+import React, { useEffect, useState, FC, useCallback } from "react";
 import styled from "@emotion/styled";
 import ChannelListLayout from "./ChanneListLayout";
 import { useParams, NavLink, useLocation } from "react-router-dom";
 import useSWR from "swr";
 import { IUser, IChannel } from "types/db";
 import { fetcher } from "@components/utils/fetcher";
+import UnreadChannelCount from "./UnreadChannelCount";
 interface Props {
   channelParams: string;
 }
 const ChannelList: FC<Props> = (props) => {
+  const [channelParam, setChannelParam] = useState("");
+  const updateChannelParam = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+      setChannelParam(e.currentTarget.id);
+    },
+    [channelParam]
+  );
   const location = useLocation();
   const { workspace } = useParams<{
     workspace?: string;
@@ -20,21 +28,7 @@ const ChannelList: FC<Props> = (props) => {
     userData ? `/api/workspaces/${workspace}/channels` : null,
     fetcher
   );
-  const date = localStorage.getItem(`${workspace}-${props.channelParams}`) || 0;
-  const { data: count, mutate } = useSWR<number>(
-    userData
-      ? `/api/workspaces/${workspace}/channels/${props.channelParams}/unreads?after=${date}`
-      : null,
-    fetcher
-  );
-  // useEffect(() => {
-  //   if (
-  //     location.pathname ===
-  //     `/workspace/${workspace}/channel/${props.channelParams}`
-  //   ) {
-  //     mutate(0);
-  //   }
-  // }, [mutate, location.pathname, workspace, props.channelParams]);
+
   return (
     <ChannelListLayout listName="channels">
       {channelData?.map((channel, index) => {
@@ -44,9 +38,11 @@ const ChannelList: FC<Props> = (props) => {
               key={`${channel.id}`}
               to={`/workspace/${workspace}/channel/${channel.name}`}
               activeStyle={{ fontWeight: "bold" }}
+              onClick={updateChannelParam}
+              id={channel.name}
             >
               <span># {channel.name}</span>
-              {count !== undefined && count > 0 && <Count>{count}</Count>}
+              <UnreadChannelCount channelName={channel.name} />
             </NavLink>
           </ListItem>
         );
@@ -73,17 +69,4 @@ export const ListItem = styled.div`
   @media screen and (max-width: 1025px) {
     font-size: 2vw;
   }
-`;
-
-export const Count = styled.span`
-  /* position: absolute; */
-  border-radius: 16px;
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 700;
-  height: 18px;
-  line-height: 18px;
-  margin-left: 4px;
-  padding: 0 9px;
-  background: #cd2553;
 `;

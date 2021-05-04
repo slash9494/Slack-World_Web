@@ -55,6 +55,7 @@ interface Props {
   channelMembersData?: IUser[];
   revalidateChannel?: () => Promise<boolean>;
   revalidateDm?: () => Promise<boolean>;
+  updateChannelParam?: string;
 }
 
 const ChatLayout: FC<Props> = (props) => {
@@ -155,25 +156,25 @@ const ChatLayout: FC<Props> = (props) => {
     (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
       const formData = new FormData();
-      console.log(e.dataTransfer);
       if (e.dataTransfer.items) {
-        for (let i = 0; e.dataTransfer.items.length; i++) {
-          if (e.dataTransfer.items[i].kind === "file") {
-            const file = e.dataTransfer.items[i].getAsFile();
-            if (file) {
-              formData.append("image", file);
-            }
-          } else {
-            for (let i = 0; i < e.dataTransfer.files.length; i++) {
-              formData.append("image", e.dataTransfer.files[i]);
-            }
+        if (e.dataTransfer.items[0].kind === "file") {
+          const file = e.dataTransfer.items[0].getAsFile();
+          if (file) {
+            formData.append("image", file);
+          }
+        } else if (e.dataTransfer.items[0].kind === undefined) {
+          console.log("undefined find");
+        } else {
+          for (let i = 0; i < e.dataTransfer.files.length; i++) {
+            formData.append("image", e.dataTransfer.files[i]);
           }
         }
       }
+
       if (channel) {
         axios
           .post(
-            `/api/workspaces/${workspace}/channels/${channel}/images`,
+            `/api/workspaces/${workspace}/channels/${props.updateChannelParam}/images`,
             formData
           )
           .then(() => {

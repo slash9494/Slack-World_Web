@@ -75,9 +75,7 @@ const Channel: FC<Props> = (props) => {
     },
     [channel, scrollBarRef.current, myData]
   );
-  // useEffect(() => {
-  //   props.updateChannelParams(channel);
-  // }, [channel]);
+
   useEffect(() => {
     socket?.on("message", onMessage);
     return () => {
@@ -90,7 +88,6 @@ const Channel: FC<Props> = (props) => {
         scrollBarRef.current?.scrollToBottom();
       }, 100);
     }
-    console.log("pop");
   }, [chatData]);
   const onChange: OnChangeHandlerFunc = useCallback(
     (e) => {
@@ -151,6 +148,7 @@ const Channel: FC<Props> = (props) => {
       isReachingEnd={isReachingEnd}
       channelMembersData={channelMembersData}
       revalidateChannel={revalidate}
+      updateChannelParam={channel}
     >
       <Chat data={chatSections} />
     </ChatLayout>

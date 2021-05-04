@@ -7,8 +7,9 @@ import { IUser, IUserWithOnline } from "types/db";
 import { fetcher } from "@components/utils/fetcher";
 import { makeStyles, createStyles, Theme } from "@material-ui/core";
 import ChannelListLayout from "./ChanneListLayout";
-import { ListItem, Count } from "./ChannelList";
+import { ListItem } from "./ChannelList";
 import useSocket from "@components/hooks/useSocket";
+import UnreadDmCount from "./UnreadDmCount";
 interface Props {
   dmParams: string;
 }
@@ -35,13 +36,6 @@ const DmList: FC<Props> = (props) => {
   );
   const [onlineList, setOnlineList] = useState<number[]>([]);
   const [socket] = useSocket(workspace);
-  const date = localStorage.getItem(`${workspace}-${props.dmParams}`) || 0;
-  const { data: count, mutate } = useSWR<number>(
-    userData
-      ? `/api/workspaces/${workspace}/dms/${props.dmParams}/unreads?after=${date}`
-      : null,
-    fetcher
-  );
 
   // useEffect(() => {
   //   if (location.pathname === `/workspace/${workspace}/dm/${props.dmParams}`) {
@@ -82,7 +76,7 @@ const DmList: FC<Props> = (props) => {
               )}
               <span>{member.nickname}</span>
               {member.id === userData?.id && <span> (나)</span>}
-              {count !== undefined && count > 0 && <Count>{count}</Count>}
+              <UnreadDmCount memberId={member.id} />
             </NavLink>
           </ListItem>
         );

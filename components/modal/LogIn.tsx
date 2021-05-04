@@ -45,7 +45,7 @@ function LogIn() {
       });
   };
   if (!error && userData) {
-    return <Redirect to="/workspace/sleact/channel/일반" />;
+    return <Redirect to="/workspace/talkRoom/channel/일반" />;
   }
 
   return (

@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from "react";
+import React, { FC, useMemo, useEffect, useState } from "react";
 import { IDM, IChat, IUser } from "types/db";
 import styled from "@emotion/styled";
 import gravatar from "gravatar";
@@ -10,29 +10,48 @@ interface Props {
 }
 
 const Chat: FC<Props> = (props) => {
+  useEffect(() => {
+    if (window.innerWidth <= 770) {
+      setImgSize(200);
+    }
+  }, []);
+  const [imgSize, setImgSize] = useState(300);
   const { workspace } = useParams<{ workspace: string; channel: string }>();
+  const BACK_URL =
+    process.env.NODE_ENV === "development" ? "http://localhost:3095" : " ";
   const chatSections = useMemo(
     () =>
       Object.entries(props.data).map(([date, chats], index) => {
         const chatData = chats.map((chat: IDM | IChat, i) => {
-          const contents = regexifyString({
-            input: chat.content,
-            pattern: /@\[(.+?)\]\((\d+?)\)|\n/g,
-            decorator(match, index) {
-              const arr: string[] | null = match.match(/@\[(.+?)\]\((\d+?)/)!;
-              if (arr) {
-                return (
-                  <Link
-                    key={match + index}
-                    to={`/workspace/${workspace}/dm/${arr[2]}`}
-                  >
-                    @{arr[1]}
-                  </Link>
-                );
-              }
-              return <br key={index} />;
-            },
-          });
+          let contents: (string | JSX.Element)[] | JSX.Element = [];
+          if (chat.content.startsWith("uploads/")) {
+            contents = (
+              <img
+                src={`${BACK_URL}/${chat.content}`}
+                style={{ maxHeight: `${imgSize}` }}
+              />
+            );
+          } else {
+            contents = regexifyString({
+              input: chat.content,
+              pattern: /@\[(.+?)\]\((\d+?)\)|\n/g,
+              decorator(match, index) {
+                const arr: string[] | null = match.match(/@\[(.+?)\]\((\d+?)/)!;
+                if (arr) {
+                  return (
+                    <Link
+                      key={match + index}
+                      to={`/workspace/${workspace}/dm/${arr[2]}`}
+                    >
+                      @{arr[1]}
+                    </Link>
+                  );
+                }
+                return <br key={index} />;
+              },
+            });
+          }
+
           const user: IUser = "Sender" in chat ? chat.Sender : chat.User;
           return (
             <>
@@ -40,6 +59,7 @@ const Chat: FC<Props> = (props) => {
                 <img
                   src={gravatar.url(user.email, { s: "28px", d: "retro" })}
                   alt={user.nickname}
+                  className="userImg"
                 />
                 <div>
                   <span className="userName">{user.nickname}</span>
@@ -74,7 +94,7 @@ const ChatContainer = styled.div`
   padding: 10px;
   display: flex;
   flex-direction: column;
-  & img {
+  .userImg {
     width: 36px;
     margin: 3px 8px 16px 8px;
   }

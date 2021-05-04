@@ -58,14 +58,7 @@ const ChannelListLayout: FC<PropsWithChildren<Props>> = (props) => {
         {props.listName}
       </CollpaseButton>
       {collapse === 90 ? (
-        <ListItemContainer>
-          {/* {memberData?.map((member) => {
-                return <>
-
-                </>
-            })} */}
-          {props.children}
-        </ListItemContainer>
+        <ListItemContainer>{props.children}</ListItemContainer>
       ) : null}
     </ListContainer>
   );
