@@ -4,15 +4,15 @@
 
 > 팀 커뮤니케이션 서비스 Slack을 clone한 그룹단위 및 개별단위의 실시간 대화 웹서비스
 
-![Slack_Web%20be3c65cc503c47eda865458a9029b200/ezgif.com-gif-maker_(3).gif](<Slack_Web%20be3c65cc503c47eda865458a9029b200/ezgif.com-gif-maker_(3).gif>)
+![ezgif com-gif-maker_(3)](https://user-images.githubusercontent.com/70849655/117077754-a79f2080-ad73-11eb-8da1-c668bcb78ea8.gif)
 
-![Slack_Web%20be3c65cc503c47eda865458a9029b200/ezgif.com-gif-maker_(6).gif](<Slack_Web%20be3c65cc503c47eda865458a9029b200/ezgif.com-gif-maker_(6).gif>)
+![ezgif com-gif-maker_(6)](https://user-images.githubusercontent.com/70849655/117077825-c1406800-ad73-11eb-8817-7467c9c30cbf.gif)
 
-![Slack_Web%20be3c65cc503c47eda865458a9029b200/_2021-05-05__6.44.54.png](Slack_Web%20be3c65cc503c47eda865458a9029b200/_2021-05-05__6.44.54.png)
+![ezgif com-gif-maker (5)](https://user-images.githubusercontent.com/70849655/117077858-cf8e8400-ad73-11eb-8834-a975a45ecd72.gif)
+
+![_2021-05-05__6 44 54](https://user-images.githubusercontent.com/70849655/117077895-de753680-ad73-11eb-8ca3-e28d0cd5be86.png)
 
 # 📝주요 기능
-
----
 
 - 오토 스크롤 & 줌 애니메이션
 - 리버스 인피니티 스크롤
@@ -25,8 +25,6 @@
 - 반응형 UI
 
 # ⛔에러이슈
-
----
 
 - 사용자 맨션중 리스트가 포인터 밑에서 나타나는 현상
 
@@ -51,8 +49,6 @@
   ⇒ position:absolute를 제외하고 기존요소에 min-width를 적용하여 drawer 오픈시 다음 요소들이 옆으로 밀려나도록 수정함.
 
 # 🛠️ 스택
-
----
 
 - React-typescript
 - SWR
